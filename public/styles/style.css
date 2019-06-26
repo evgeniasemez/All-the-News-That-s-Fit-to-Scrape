@@ -1,0 +1,14 @@
+.links{
+    position: absolute;
+    top: 1vh; 
+    left: 230px;
+    text-decoration-color: black;
+  }
+  a{
+      color: black;
+  }
+  body{
+      background: url(../images/news1.jpg);
+      width: 500%;
+      height: 500%;
+  }

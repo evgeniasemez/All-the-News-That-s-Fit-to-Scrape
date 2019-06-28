@@ -13,6 +13,7 @@ mongoose.connect(MONGODB_URI);
 var app = express();
 var PORT = process.env.PORT || 3000;
 
+
 // Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -27,8 +28,11 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 // Routes
-// require("./routes/apiRoutes")(app);
+require("./routes/apiRoutes")(app);
 require("./routes/htmlRoutes")(app);
+
+
+
 
 
 app.listen(PORT, function() {

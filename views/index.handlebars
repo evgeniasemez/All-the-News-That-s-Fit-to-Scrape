@@ -1,12 +1,59 @@
-
 <nav class="navbar navbar-light bg-light">
   <div class="pull-right loginbutton">
     <h4>Mongo Scraper</h4>
     <div class="links">
       <a href=#user>Home</a><span> | </span>
       <a href=#calendar>Saved Articles</a><span> | </span>
-      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#loginModal" id="signUpButton">Scrape New Articles</button>
+      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#articleModal"
+        id="scrapeButton">Scrape New Articles</button>
+
+      <div class="modal" id="articleModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <p>Added 20 New Articles</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" id="popupOk" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    
+
   </div>
 </nav>
+
+<div>
+  {{#each articles}}
+  <div class="card">
+    <h5 class="card-header">{{title}}</h5>
+    <div class="card-body">
+      {{!-- <h5 class="card-title">Special title treatment</h5> --}}
+      <p class="card-text">{{teaser}}</p>
+      <a href="{{link}}">Click for full article</a>
+    </div>
+  </div>
+  {{/each}}
+</div>
+
+<script>
+
+  $("#scrapeButton").on("click", function () {
+    var url = "/scrape";
+    $.ajax(url, {}).then(function (scrapeResponse) {
+      console.log(scrapeResponse);
+    });
+  });
+
+  $("#popupOk").on("click", function () {
+    window.location.href = "/articles";
+  });
+
+</script>

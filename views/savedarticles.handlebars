@@ -1,0 +1,20 @@
+<div>
+  {{#each articles}}
+  <div class="card">
+    <div class = "saveArticleButton">
+      <h5 class="card-header">{{title}}</h5>
+      
+      <button type="button" data-link = "{{link}}" class="btn btn-info saveButtonClass" style = "margin-right: 10px;">Article Notes</button>
+
+      <button type="button" data-link = "{{link}}" class="btn btn-info saveButtonClass" style = "margin-right: 10px;">Delete from Saved</button>
+
+
+    </div>
+    <div class="card-body">
+      {{!-- <h5 class="card-title">Special title treatment</h5> --}}
+      <p class="card-text">{{teaser}}</p>
+      <a href="{{link}}">Click for full article</a>
+    </div>
+  </div>
+  {{/each}}
+</div>

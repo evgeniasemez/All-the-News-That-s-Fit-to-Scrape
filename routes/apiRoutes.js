@@ -26,17 +26,20 @@ module.exports = function (app) {
                     .find("a")
                     .attr("href");
 
-                // Create a new Article using the `result` object built from scraping
-                db.article.updateOne({link: result.link}, result, {upsert: true, setDefaultsOnInsert: true})
-                    .then(function (dbArticle) {
-                        // View the added result in the console
-                        console.log(dbArticle);
-                    })
-                    .catch(function (err) {
-                        // If an error occurred, log it
-                        console.log(err);
-                    });
-                console.log("articles are here", result.title, result.teaser, result.link);
+                if (result.title && result.teaser && result.link) {
+
+                    // Create a new Article using the `result` object built from scraping
+                    db.article.updateOne({ link: result.link }, result, { upsert: true, setDefaultsOnInsert: true })
+                        .then(function (dbArticle) {
+                            // View the added result in the console
+                            console.log(dbArticle);
+                        })
+                        .catch(function (err) {
+                            // If an error occurred, log it
+                            console.log(err);
+                        });
+                    console.log("articles are here", result.title, result.teaser, result.link);
+                }
             });
 
             // Send a message to the client
@@ -49,7 +52,21 @@ module.exports = function (app) {
         db.article.find({})
             .then(function (dbArticle) {
                 // If we were able to successfully find Articles, send them back to the client
-                res.render("index", {articles: dbArticle});
+                res.render("index", { articles: dbArticle });
+            })
+            .catch(function (err) {
+                // If an error occurred, send it to the client
+                res.json(err);
+            });
+    });
+    app.post("/savedarticle", function (req, res) {
+        
+        // Grab every document in the Articles collection
+        db.article.updateOne({link: req.body.link}, {savedArticle: true})
+            .then(function (dbArticle) {
+                res.json(dbArticle);
+                // If we were able to successfully find Articles, send them back to the client
+                console.log(dbArticle);
             })
             .catch(function (err) {
                 // If an error occurred, send it to the client

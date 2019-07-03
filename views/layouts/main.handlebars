@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>MongoDB</title>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    {{!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" --}}
+        {{!-- integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" --}}
+        {{!-- crossorigin="anonymous"></script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
         crossorigin="anonymous"></script>
@@ -17,7 +18,7 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
         integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/styles/style.css">
@@ -29,7 +30,7 @@
         <div class="pull-right loginbutton">
             <h4>Mongo Scraper</h4>
             <div class="links">
-                <a href=>Home</a><span> | </span>
+                <a href="/">Home</a><span> | </span>
                 <a href="/saved">Saved Articles</a><span> | </span>
                 <button type="button" class="btn btn-info" data-toggle="modal" data-target="#articleModal"
                     id="scrapeButton">Scrape New Articles</button>
@@ -44,7 +45,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <p>Added 20 New Articles</p>
+                                <p>Added <span id="numberID"></span> new Articles</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" id="popupOk" class="btn btn-secondary"
@@ -66,6 +67,7 @@
             var url = "/scrape";
             $.ajax(url, {}).then(function (scrapeResponse) {
                 console.log(scrapeResponse);
+                $("#numberID").html(scrapeResponse.numArticles);
             });
         });
 
@@ -75,15 +77,43 @@
 
         $(".saveButtonClass").on("click", function () {
             var url = "/savedarticle";
-            console.log("starting save");
             $.ajax(url, { method: "POST", data: { link: $(this).attr("data-link") } }).then(function (savedarticle) {
                 console.log("Saved article: ", savedarticle);
                 window.location.href = window.location.href;
             });
         })
 
+        $(".articleDeleteNotes").on("click", function () {
+            var url = "/deletedarticle";
+            $.ajax(url, { method: "DELETE", data: { link: $(this).attr("data-link") } }).then(function (savedarticle) {
+                console.log("Saved article: ", savedarticle);
+                window.location.href = window.location.href;
+            });
+        })
+
+        $(".articleNotes").on("click", function () {
+            var url = "/deletedarticle";
+            $.ajax(url, { method: "POST", data: { link: $(this).attr("data-link") } }).then(function (savedarticle) {
+                console.log("Saved article: ", savedarticle);
+                window.location.href = window.location.href;
+            });
+        })
+
+        $(".articleNotes").on("click", function () {
+            var dataNotes = $(this).attr("data-link");
+            $("#saveNotesButton").attr("data-link", dataNotes);
+        });
+        $("#saveNotesButton").on("click", function () {
+            var url = "/articleNotes";
+            $.ajax(url, { method: "POST", data: { link: $(this).attr("data-link"), note: $("#textNotes").val() } }).then(function (savedarticle) {
+                $("#noteModal").modal("hide");
+            });
+        });
+
+
 
     </script>
 
 </body>
+
 </html>

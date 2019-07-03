@@ -9,6 +9,7 @@ module.exports = function (app) {
         axios.get("https://www.npr.org/").then(function (response) {
             // Then, we load that into cheerio and save it to $ for a shorthand selector
             var $ = cheerio.load(response.data);
+            var number = 0;
 
             // Now, we grab every h2 within an article tag, and do the following:
             $("article").each(function (i, element) {
@@ -32,18 +33,22 @@ module.exports = function (app) {
                     db.article.updateOne({ link: result.link }, result, { upsert: true, setDefaultsOnInsert: true })
                         .then(function (dbArticle) {
                             // View the added result in the console
-                            console.log(dbArticle);
+                            console.log("added an article, now we have ", number);
+                            number++;
+                            if (i === ($("article").length - 1)) {
+                                // Send a message to the client
+                                console.log("ended up with ", number);
+                                res.send({ numArticles: number });
+                            }
                         })
                         .catch(function (err) {
                             // If an error occurred, log it
                             console.log(err);
                         });
-                    console.log("articles are here", result.title, result.teaser, result.link);
+                    // console.log("articles are here", result.title, result.teaser, result.link);
                 }
             });
 
-            // Send a message to the client
-            res.send("Scrape Complete");
         });
     });
     // Route for getting all Articles from the db
@@ -60,9 +65,9 @@ module.exports = function (app) {
             });
     });
     app.post("/savedarticle", function (req, res) {
-        
+
         // Grab every document in the Articles collection
-        db.article.updateOne({link: req.body.link}, {savedArticle: true})
+        db.article.updateOne({ link: req.body.link }, { savedArticle: true })
             .then(function (dbArticle) {
                 res.json(dbArticle);
                 // If we were able to successfully find Articles, send them back to the client
@@ -73,5 +78,42 @@ module.exports = function (app) {
                 res.json(err);
             });
     });
+
+    app.delete("/deletedarticle", function (req, res) {
+
+        // Grab every document in the Articles collection
+        db.article.updateOne({ link: req.body.link }, { savedArticle: false })
+            .then(function (dbArticle) {
+                res.json(dbArticle);
+                // If we were able to successfully find Articles, send them back to the client
+                console.log(dbArticle);
+            })
+            .catch(function (err) {
+                // If an error occurred, send it to the client
+                res.json(err);
+            });
+    });
+
+    app.post("/articleNotes", function (req, res) {
+        console.log(req);
+        // Create a new note and pass the req.body to the entry
+        db.articlenotes.create({title: "note title", body: req.body.note})
+            .then(function (dbNote) {
+                // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+                // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
+                // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+                return db.article.findOneAndUpdate({ link: req.body.link }, { note: dbNote._id }, { new: true });
+            })
+            .then(function (dbArticle) {
+                // If we were able to successfully update an Article, send it back to the client
+                res.json(dbArticle);
+            })
+            .catch(function (err) {
+                // If an error occurred, send it to the client
+                res.json(err);
+            });
+    });
+
+
 
 }

@@ -33,19 +33,24 @@ module.exports = function (app) {
                     db.article.updateOne({ link: result.link }, result, { upsert: true, setDefaultsOnInsert: true })
                         .then(function (dbArticle) {
                             // View the added result in the console
-                            console.log("added an article, now we have ", number);
-                            number++;
-                            if (i === ($("article").length - 1)) {
-                                // Send a message to the client
-                                console.log("ended up with ", number);
-                                res.send({ numArticles: number });
-                            }
+                            // number++;
+                            // if (i === ($("article").length - 1)) {
+                            //     // Send a message to the client
+                            //     console.log("ended up with ", number);
+                            //     res.send({ numArticles: number });
+                            // }
                         })
                         .catch(function (err) {
                             // If an error occurred, log it
                             console.log(err);
                         });
+                    number++;
                     // console.log("articles are here", result.title, result.teaser, result.link);
+                }
+                if (i === ($("article").length - 1)) {
+                    // Send a message to the client
+                    console.log("ended up with ", number);
+                    res.send({ numArticles: number });
                 }
             });
 
@@ -95,9 +100,9 @@ module.exports = function (app) {
     });
 
     app.post("/articleNotes", function (req, res) {
-        console.log(req);
+        // console.log(req);
         // Create a new note and pass the req.body to the entry
-        db.articlenotes.create({title: "note title", body: req.body.note})
+        db.articlenotes.create({ title: "note title", body: req.body.note })
             .then(function (dbNote) {
                 // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
                 // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
@@ -114,6 +119,18 @@ module.exports = function (app) {
             });
     });
 
-
+    app.get("/articleSavedNotes/:notesID", function (req, res) {
+        // console.log(req);
+        db.articlenotes.findById(req.params.notesID)
+            .then(function (note) {
+                console.log(note);
+                // If we were able to successfully update an Article, send it back to the client
+                res.json(note);
+            })
+            .catch(function (err) {
+                // If an error occurred, send it to the client
+                res.json(err);
+            });
+    });
 
 }

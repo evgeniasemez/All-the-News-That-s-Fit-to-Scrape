@@ -25,7 +25,7 @@ var db = require("../models");
 # Test Cases
 Home Page View
 
-![Screenshot](models/public/images/homepage.png)
+![Screenshot](images/homepage.png)
 
 - Click on the "Scrape New Articles" button to add new articles
 - the pop up appears with a number of added articles

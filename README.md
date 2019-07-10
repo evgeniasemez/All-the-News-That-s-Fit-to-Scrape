@@ -21,3 +21,22 @@ var axios = require("axios");
 var mongoose = require("mongoose");
 var path = require("path");
 var db = require("../models");
+
+# Test Cases
+Home Page View
+
+![Screenshot](models/public/images/homepage.png)
+
+- Click on the "Scrape New Articles" button to add new articles
+- the pop up appears with a number of added articles
+- and the articles appear on the screen
+- click on "Save Article" button to save any desired articles
+- click on "Saved Articles" link in navigation bar
+
+![Screenshot](models/public/images/saveArticlesPage.png)
+
+- it navigates to Saved Articles where you can clcik on "Articles Note" to add notes
+
+![Screenshot](models/public/images/saveArticlesNote.png)
+
+- and click on "Delete from Saved" where you can delete saved articles
